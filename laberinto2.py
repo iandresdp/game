@@ -19,7 +19,7 @@ WHITE = (255, 255, 255)
 GREY = (128, 128, 128)
 YELLOW = (255, 255, 0)
 BLUE = (0, 0, 255)
-RED =  (255,255, 0)
+RED =  (255,0, 0)
 GREEN = (0, 255, 0)
 
 # Definir tamaño de celda y margen
@@ -75,11 +75,16 @@ player_size = CELL_SIZE
 # Definir velocidad del jugador
 player_speed = CELL_SIZE + CELL_MARGIN
 
-# Definir coordenadas iniciales del enemigo
-x1 = 100
-y1 = 50
-x2 = 200
-y2 = 100
+# Generar coordenadas iniciales aleatorias para el enemigo 1
+x1 = random.randint(20, 620)
+y1 = random.randint(20, 620)
+
+# Generar coordenadas iniciales aleatorias para el enemigo 2
+x2 = random.randint(20, 620)
+y2 = random.randint(20, 620)
+
+print(f'Coordenadas iniciales del enemigo 1: ({x1}, {y1})')
+print(f'Coordenadas iniciales del enemigo 2: ({x2}, {y2})')
 
 # Definir enemigo
 class Enemy:
@@ -134,22 +139,42 @@ while running:
             elif event.key == pygame.K_UP and player_y > 0:
                 player_y -= player_speed
             elif event.key == pygame.K_DOWN and player_y < SCREEN_HEIGHT - player_size:
-                player_y += player_speed      
-
+                player_y += player_speed
+                
+    # Cargar una imagen como textura
+    texture = pygame.image.load('texture.jpg')
+    
     # Dibujar el laberinto
     for row in range(NUM_ROWS):
         for col in range(NUM_COLS):
             if maze[row][col] == 1:
-                color = GREY
+                # Crear un rectángulo con la textura
+                rect = pygame.Rect((CELL_MARGIN + CELL_SIZE) * col + CELL_MARGIN,
+                                   (CELL_MARGIN + CELL_SIZE) * row + CELL_MARGIN,
+                                   CELL_SIZE,
+                                   CELL_SIZE)
+                screen.blit(texture, rect)
             elif row == entry_row and col == entry_col:
                 color = GREEN # color de la entrada
+                pygame.draw.rect(screen, color,
+                                 [(CELL_MARGIN + CELL_SIZE) * col + CELL_MARGIN,
+                                  (CELL_MARGIN + CELL_SIZE) * row + CELL_MARGIN,
+                                  CELL_SIZE,
+                                  CELL_SIZE])
             elif row == exit_row and col == exit_col:
-                color = RED # color de la salida
+                color = YELLOW # color de la salida
+                pygame.draw.rect(screen, color,
+                                 [(CELL_MARGIN + CELL_SIZE) * col + CELL_MARGIN,
+                                  (CELL_MARGIN + CELL_SIZE) * row + CELL_MARGIN,
+                                  CELL_SIZE,
+                                  CELL_SIZE])
             else:
                 color = WHITE
-            pygame.draw.rect(screen, color, [(CELL_MARGIN + CELL_SIZE) * col + CELL_MARGIN,
-                                             (CELL_MARGIN + CELL_SIZE) * row + CELL_MARGIN,
-                                             CELL_SIZE, CELL_SIZE])
+                pygame.draw.rect(screen, color,
+                                 [(CELL_MARGIN + CELL_SIZE) * col + CELL_MARGIN,
+                                  (CELL_MARGIN + CELL_SIZE) * row + CELL_MARGIN,
+                                  CELL_SIZE,
+                                  CELL_SIZE])
     # Dibujar el jugador
     pygame.draw.rect(screen, (255, 0, 0), (player_x, player_y, player_size, player_size))
 
